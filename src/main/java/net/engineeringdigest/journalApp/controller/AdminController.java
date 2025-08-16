@@ -1,8 +1,10 @@
 package net.engineeringdigest.journalApp.controller;
 
+import net.engineeringdigest.journalApp.cache.AppCache;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,21 +18,31 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AppCache appCache;
+
     @GetMapping("/all-users")
-    public ResponseEntity<?> getAllUsers(){
+    public ResponseEntity<?> getAllUsers() {
         List<User> allUsers = userService.getAll();
-        if (allUsers != null && !allUsers.isEmpty()){
+        if (allUsers != null && !allUsers.isEmpty()) {
             return new ResponseEntity<>(allUsers, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/create-admin-user")
-        public ResponseEntity<?> createAdmin(@RequestBody User user){
-            userService.saveAdmin(user);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+    public ResponseEntity<?> createAdmin(@RequestBody User user) {
+        userService.saveAdmin(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/clear-cache")
+    public ResponseEntity<?> clearCache() {
+        appCache.init();
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+}
 
 
 
